@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>repl.it</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+
+  <section id="start">
+    <h1>What Do You Need Today?</h1>
+    <h2>Leaving the house? Enter your zip code to see what you should bring with you!<h2>
+     <form id="submit">
+       <input type="number" id="location" placeholder="90210, 20002, etc.">
+       <input type="submit">
+     </form>
+     <div id="loading" class="hidden">
+       <p>Loading...</p>
+     </div>
+  </section>
+
+   <section id="error"></section>
+
+    <section id="results" class="hidden">
+      <ul id="resultsList">
+      </ul>
+    </section>
+    
+    <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
