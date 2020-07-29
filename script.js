@@ -107,11 +107,11 @@ function displayResults(weather, uvi, pollenRisk){
   }
   if (uvi > 3 && uvi < 7) {
     count++;
-    $('#resultsList').append(`<li>Make sure you bring your sunscreen today. UVI Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}</a></li>`)
+    $('#resultsList').append(`<li>Make sure you bring your sunscreen today. UV Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}</a></li>`)
   }
   if (uvi > 7) {
     count++;
-    $('#resultsList').append(`<li>Make sure you bring your sunscreen today, and try to stay out of the sun! UVI Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}!</a></li>`)
+    $('#resultsList').append(`<li>Make sure you bring your sunscreen today, and try to stay out of the sun! UV Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}!</a></li>`)
   }
   if (pollenRisk == "Medium" || pollenRisk == "High") {
     count++;
