@@ -15,7 +15,8 @@ let userLat ={};
 let weather = [];
 let uvi = [];
 let pollenRisk = ""; 
-
+let today = new Date();
+let userTime = (today.getHours() + ":" + today.getMinutes());
 
 // encode URL parameters
 function formatQueryParams(params){
@@ -41,10 +42,9 @@ function locationToLongLat(location){
     userLat = data.records[0].fields.latitude;
     getWeather(userLong, userLat);
   })
-  .catch(err=> {$('#error').html(`<p>Something went wrong :(</p><p>Make sure you're connected to the internet.</p>`);
-  });
+  .catch(err=> alert("Something went wrong. Make sure you're connected to the internet, or try again.")
+  );
 }
-
 
 // gets weather and uvi
 function getWeather(userLong, userLat){
@@ -63,8 +63,8 @@ function getWeather(userLong, userLat){
     uvi = data.current.uvi;
     getPollen(userLong, userLat);
   })
-  .catch(err=> {$('#error').html(`<p>Something went wrong :(</p><p>Make sure you're connected to the internet.</p>`);
-  });
+  .catch(err=> alert("Something went wrong. Make sure you're connected to the internet, or try again.")
+  );
 }
 
 
@@ -88,41 +88,49 @@ function getPollen(userLong, userLat){
   .then(response => response.json())
   .then(data => {
     pollenRisk = data.data.risk;
-    displayResults(weather, uvi, pollenRisk);
   })
-  .catch(err=> {$('#error').html(`<p>Something went wrong :(</p><p>Make sure you're connected to the internet.</p>`);
+  .catch(err=> {$('#error').html(``);
   });
+  displayResults(weather, uvi, pollenRisk);
 }
 
 
 
 function displayResults(weather, uvi, pollenRisk){
-  //$('#start').addClass('hidden');
-  $('#results').removeClass('hidden');
-  $('#resultsList').empty();
+  $('#loading').addClass('hidden');
+  $('#loading').addClass('hidden');
   let count = 0;
   if (weather.toLowerCase() === 'thunderstorm' || weather.toLowerCase() === 'drizzle' || weather.toLowerCase() === 'rain') {
     count++;
-    $('#resultsList').append("<li>It's going to rain today. Don't forget your umbrella!</li>")
+    $('#rainIndicator').html(`<p>
+    It's going to rain today. Don't forget your umbrella!</p>
+     <i class="wi wi-day-sprinkle colorRainIcon"></i>`);
   }
-  if (uvi > 3 && uvi < 7) {
+  if (weather.toLowerCase() === 'snow') {
     count++;
-    $('#resultsList').append(`<li>Make sure you bring your sunscreen today. UV Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}</a></li>`)
+    $('#snowIndicator').html(`<p>It's going to snow today! Make sure you bring boots and gloves.</p>
+     <i class="wi wi-snow colorSnowIcon"></i>`);
   }
-  if (uvi > 7) {
+  if (userTime < '18:00') {
+    if (uvi > 3) {
+      count++;
+      $('#uvIndicator').html(`<p>Make sure you bring your sunscreen today. UV Index of: <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}</a></p>
+     <i class="wi wi-day-sunny colorSunIcon"></i>`);
+      $('#uvIndicator').removeClass('hidden');
+    }
+  }
+  if (pollenRisk.toLowerCase() === 'high' || pollenRisk.toLowerCase() === 'medium') {
     count++;
-    $('#resultsList').append(`<li>Make sure you bring your sunscreen today, and try to stay out of the sun! UV Index of <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}!</a></li>`)
+    $('#pollenIndicator').html(`<p>Pollen is high! If you suffer from allergies, bring allergy medicine!</p>
+     <i class="wi wi-snowflake-cold colorPollenIcon"></i>`);
   }
-  if (pollenRisk == "Medium" || pollenRisk == "High") {
-    count++;
-    $('#resultsList').append('<li>Pollen is high today! If you suffer from allergies, make sure you bring allergy medicine!</li>')
-  }
-  if(count===0) {
-    $('#resultsList').append('<li>It looks like clear skies, low pollen, and low UVI. Have a great day!</li>')
-  }
-  $('#loading').addClass('hidden');
+  if(count===0){
+    if (userTime < "18:00") {
+      $('#noresults').html('<p>It looks like clear skies, low pollen, and low <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">UVI</a>. You have nothing to bring but a smile!<br>Have a great day! :)</p><i class="wi wi-alien"></i>').removeClass('hidden');}
+    if (userTime > "18:00") {
+    $('#noresults').html('<p>It looks like a beautiful night. You have nothing to bring but a smile!<br>Have a great evening! :)</p><i class="wi wi-moon-alt-waning-crescent-4"></i>').removeClass('hidden');}
+ }
 }
-
 
 // grabs "location" value (zip code)
 // sends to locationToLongLat function
@@ -132,8 +140,24 @@ function watchForm(){
     const location = $('#location').val();
     $('#loading').removeClass('hidden');
     $('#error').empty();
-    $('#resultsList').empty();
+    $('#rainIndicator').addClass('hidden');
+    $('#uvIndicator').addClass('hidden');
+    $('#pollenIndicator').addClass('hidden');
+    $('#snowIndicator').addClass('hidden');
+    $('#noresults').addClass('hidden');
     locationToLongLat(location);
+    // for testing purposes
+    if (location === '00000') {
+    $('#rainIndicator').html(`<p>
+    It's going to rain today. Don't forget your umbrella!</p>
+     <i class="wi wi-day-sprinkle colorRainIcon"></i>`).removeClass('hidden');
+    $('#uvIndicator').html(`<p>Make sure you bring your sunscreen today. UV Index of: <a href="https://www.epa.gov/sunsafety/uv-index-scale-0">${uvi}</a></p>
+     <i class="wi wi-day-sunny colorSunIcon"></i>`).removeClass('hidden');
+    $('#pollenIndicator').html(`<p>Pollen is high! If you suffer from allergies, bring allergy medicine!</p>
+     <i class="wi wi-snowflake-cold colorPollenIcon"></i>`).removeClass('hidden');
+    $('#snowIndicator').html(`<p>It's going to snow today! Make sure you bring boots and gloves.</p>
+     <i class="wi wi-snow colorSnowIcon"></i>`).removeClass('hidden');
+    }
   });
 }
 
